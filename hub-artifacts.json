@@ -1,6 +1,12 @@
 {
   "schema_version": 1,
-  "status": "uploading",
-  "repositories": {},
-  "message": "Artifact upload is in progress. The publisher replaces this file with pinned revisions after verification."
+  "status": "inference-ready",
+  "repositories": {
+    "model": {
+      "repo_id": "anonymos111/Model_Am_Thanh-models",
+      "revision": "265f798f032969763841ff8d6aabec7fd7805281",
+      "archives": 2,
+      "bytes": 338236346
+    }
+  }
 }
