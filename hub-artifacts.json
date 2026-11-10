@@ -1,12 +1,18 @@
 {
   "schema_version": 1,
-  "status": "inference-ready",
+  "status": "complete",
   "repositories": {
     "model": {
       "repo_id": "anonymos111/Model_Am_Thanh-models",
-      "revision": "265f798f032969763841ff8d6aabec7fd7805281",
-      "archives": 2,
-      "bytes": 338236346
+      "revision": "3bb03d4c4143976e9b142a0f86987db8962bcd0e",
+      "archives": 46,
+      "bytes": 14381335218
+    },
+    "dataset": {
+      "repo_id": "anonymos111/Model_Am_Thanh-data",
+      "revision": "37c6f6dbcf6437efed8b57c046d7b93849d38f21",
+      "archives": 49,
+      "bytes": 16712895320
     }
   }
 }
