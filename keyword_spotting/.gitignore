@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+.pytest_cache/
+data/raw/
+data/generated/
+data/features/
+data/imports/
+data/real_recordings/*.wav
+runs/
+*.part
+*.zip
+*.tar.gz
+*.pt
+*.npy
+*.mmap
+*.log

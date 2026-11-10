@@ -1,0 +1,55 @@
+seed: 42
+target_word: "yes"
+paths:
+  esc_dir: data/raw/esc
+  speech_dir: data/raw/speech_commands
+  manifests: data/manifests
+  generated: data/generated
+  features: data/features
+  reports: reports
+  run_dir: runs/baseline
+download:
+  esc_url: https://github.com/karolpiczak/ESC-50/archive/refs/heads/master.zip
+  speech_url: https://storage.googleapis.com/download.tensorflow.org/data/speech_commands_v0.02.tar.gz
+  timeout_seconds: 60
+  retries: 3
+audio:
+  sample_rate: 16000
+  duration_seconds: 5
+  trim_db: 45
+  trim_padding_ms: 40
+  silence_rms: 0.00001
+mix:
+  clean_background_fraction: 0.2
+  snr_min_db: 0
+  snr_max_db: 15
+  fallback_speech_dbfs: -25
+  peak_limit: 0.98
+features:
+  sample_rate: 16000
+  n_mels: 64
+  n_fft: 512
+  win_length: 400
+  hop_length: 160
+  fmin: 20
+  fmax: 8000
+  center: false
+  power: 2
+  epsilon: 0.0000000001
+  mel_scale: slaney
+  mel_norm: slaney
+model:
+  channels: [32, 64, 128]
+  hidden_size: 64
+  dropout: 0.3
+train:
+  batch_size: 32
+  max_epochs: 30
+  learning_rate: 0.001
+  patience: 5
+  min_delta: 0
+  num_workers: 0
+  cpu_threads: 4
+  device: auto
+  amp: true
+  augmentation: false

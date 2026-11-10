@@ -1,0 +1,8 @@
+torch==2.5.1
+torchaudio==2.5.1
+pyarrow==21.0.0
+numpy==1.26.4
+scipy==1.14.1
+soundfile==0.13.1
+librosa==0.11.0
+scikit-learn==1.6.1

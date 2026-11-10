@@ -1,0 +1,9 @@
+# Keep Colab's preinstalled, CUDA-compatible torch. CPU installation is in README.
+numpy>=1.26,<3
+scipy>=1.12,<2
+soundfile>=0.12,<1
+librosa>=0.10.2,<0.12
+pandas>=2.2,<3
+scikit-learn>=1.5,<2
+PyYAML>=6.0,<7
+matplotlib>=3.9,<4

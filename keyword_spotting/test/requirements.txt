@@ -1,0 +1,8 @@
+# setup.ps1 installs the CPU build of torch first.
+# Versions match the environment used to verify this model on CPU.
+torch==2.5.1
+numpy==1.26.4
+scipy==1.14.1
+soundfile==0.13.1
+librosa==0.11.0
+PyYAML==6.0.2
