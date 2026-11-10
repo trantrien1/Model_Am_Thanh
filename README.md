@@ -9,6 +9,8 @@ Hai pipeline PyTorch chạy trên CPU: `schwa_detection` phát hiện âm /ə/ t
 
 `git clone` chỉ tải code. Các đường dẫn dữ liệu trong tài liệu con hoạt động sau khi khôi phục artifact tương ứng. Script tải xuống kiểm tra SHA-256 từng gói và khôi phục đúng cấu trúc thư mục; revision Hugging Face được khóa trong `hub-artifacts.json` sau khi xuất bản hoàn tất. Kho Hugging Face là bộ lưu trữ dự án, không dùng trực tiếp bằng `transformers.from_pretrained()`.
 
+**Trạng thái lần xuất bản đầu:** kiểm tra trường `status` trong [hub-artifacts.json](hub-artifacts.json). `uploading` nghĩa là đang chuyển dữ liệu; `inference-ready` cho phép tải/chạy hai model nhưng bản sao lưu đầy đủ còn đang tải; `complete` nghĩa là đã tải đủ artifact. Tiến trình xuất bản sẽ cập nhật file này trên GitHub. Chạy `git pull` để nhận revision mới trước khi tải.
+
 ## 1. Clone và cài môi trường
 
 Dùng **Python 3.10 hoặc 3.11**, khoảng 2 GB RAM trở lên cho inference Schwa (training cần nhiều hơn). Các lệnh dưới đây chạy trong PowerShell trên Windows:
@@ -106,6 +108,8 @@ python scripts/publish_hub.py --namespace anonymos111
 ```
 
 Script tạo gói theo nhóm tối đa khoảng 384 MiB dữ liệu đầu vào (file đơn lớn hơn nằm riêng), upload từng gói, xóa file tạm và lưu tiến độ trong `.hf-publish/`. Chạy lại để tiếp tục nếu bị ngắt. Khi hoàn tất, `hub-artifacts.json` khóa hai revision chứa manifest và SHA-256 mới; commit file này cùng thay đổi code lên GitHub. Giữ máy không train/ghi dữ liệu trong quá trình xuất bản.
+
+Trên máy chủ dự án, `python scripts/finish_publication.py` thực hiện upload có retry, ưu tiên hai model inference, kiểm tra tải/chạy từ bản clone sạch rồi tự commit/push revision vào GitHub. Script này dành cho người quản lý kho có quyền ghi ở cả hai dịch vụ. Trạng thái và log lần xuất bản đầu nằm tại `.hf-publish/status.json`, `.hf-publish/publication.log`, `.hf-publish/publication-error.log`; đây là file cục bộ, không commit. Nếu máy tắt hoặc tiến trình dừng, chạy lại lệnh trên để tiếp tục từ các gói đã hoàn tất.
 
 API upload/download dùng thư viện chính thức [huggingface_hub](https://huggingface.co/docs/huggingface_hub/guides/upload).
 

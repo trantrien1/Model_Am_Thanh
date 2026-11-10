@@ -1,6 +1,7 @@
 """Upload artifact shards without staging a second copy of the whole project."""
 import argparse
 import collections
+import gzip
 import hashlib
 import json
 import os
@@ -8,7 +9,7 @@ import tarfile
 import tempfile
 from pathlib import Path
 
-from hub_layout import ROOT, SKIP_DIRS, artifact_group
+from hub_layout import ROOT, SKIP_DIRS, PROFILES, artifact_group
 
 
 def digest(path):
@@ -47,8 +48,11 @@ def main():
     parser.add_argument('--namespace', help='Defaults to authenticated HF account')
     parser.add_argument('--shard-mib', type=int, default=384)
     parser.add_argument('--dry-run', action='store_true')
+    parser.add_argument('--profile', choices=['all', 'inference'], default='all')
     args = parser.parse_args()
     groups = inventory()
+    if args.profile == 'inference':
+        groups = {key: items for key, items in groups.items() if key[1] in PROFILES['inference']}
     print(json.dumps({group: {'files': len(items), 'bytes': sum(x[1] for x in items)}
                       for (_, group), items in sorted(groups.items())}, indent=2), flush=True)
     if args.dry_run:
@@ -56,9 +60,11 @@ def main():
     from huggingface_hub import HfApi
     api = HfApi()
     namespace = args.namespace or api.whoami()['name']
-    repos = {'dataset': namespace + '/Model_Am_Thanh-data', 'model': namespace + '/Model_Am_Thanh-models'}
-    config = {'schema_version': 1, 'status': 'complete', 'repositories': {}}
+    repos = {'model': namespace + '/Model_Am_Thanh-models', 'dataset': namespace + '/Model_Am_Thanh-data'}
+    config = {'schema_version': 1, 'status': 'complete' if args.profile == 'all' else 'inference-ready', 'repositories': {}}
     for kind, repo in repos.items():
+        if not any(key[0] == kind for key in groups):
+            continue
         api.create_repo(repo, repo_type=kind, exist_ok=True, private=False)
         manifest = {'schema_version': 1, 'archives': []}
         state_path = ROOT / '.hf-publish' / (kind + '.json')
@@ -87,7 +93,7 @@ def main():
                     # The OS temporary directory is used for just one shard at a time.
                     with tempfile.TemporaryDirectory(prefix='model-am-thanh-') as temporary:
                         archive = Path(temporary) / 'shard.tar.gz'
-                        with tarfile.open(archive, 'w:gz', compresslevel=1) as tar:
+                        with archive.open('wb') as raw, gzip.GzipFile(fileobj=raw, mode='wb', compresslevel=1, mtime=0, filename='') as compressed, tarfile.open(fileobj=compressed, mode='w|') as tar:
                             for relative, expected_size, expected_mtime in batch:
                                 path = ROOT / relative
                                 before = path.stat()

@@ -60,8 +60,10 @@ def main():
     parser.add_argument('--list', action='store_true', help='List selected archives without downloading them')
     args = parser.parse_args()
     config = json.loads(args.config.read_text(encoding='utf-8'))
-    if config.get('status') != 'complete':
+    if config.get('status') not in {'complete', 'inference-ready'}:
         raise SystemExit('HF publication is not complete; hub-artifacts.json must contain pinned revisions.')
+    if args.profile == 'all' and config['status'] != 'complete':
+        raise SystemExit('Inference is ready; the full dataset/checkpoint upload is still in progress.')
     from huggingface_hub import hf_hub_download
     selected_groups = None if args.profile == 'all' else PROFILES[args.profile]
     for kind, repository in config['repositories'].items():
